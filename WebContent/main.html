@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>music finder</title>
+
+<script type="text/javascript" src="assets/js/jquery/jquery-1.9.0.js"></script>
+<link rel="stylesheet" href="assets/css/main.css">
+<link rel="stylesheet" href="assets/css/index.css">
+<!-- <link rel="stylesheet" href="assets/css/basic.css"> -->
+
+</head>
+
+<style>
+
+.links line {
+  stroke: #999;
+  stroke-opacity: 0.6;
+}
+
+.nodes circle {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+</style>
+
+<body>
+	<div class="container">
+		
+		<!-- d3js 그래프 시각화 부분 -->
+	    <div class="graph-area">
+			<svg width="920" height="800"></svg> <!-- auto를 찾아야댐 -->
+			<script src="https://d3js.org/d3.v4.min.js"></script>
+			<script>
+			
+			var svg = d3.select("svg"),
+			    width = +svg.attr("width"),
+			    height = +svg.attr("height");
+			
+			var color = d3.scaleOrdinal(d3.schemeCategory20);
+			
+			var simulation = d3.forceSimulation()
+			    .force("link", d3.forceLink().id(function(d) { return d.id; }))
+			    .force("charge", d3.forceManyBody())
+			    .force("center", d3.forceCenter(width / 2, height / 2));
+		
+			d3.json("miserables.json", function(error, graph) {
+			  if (error) throw error;
+			
+			  var link = svg.append("g")
+			      .attr("class", "links")
+			    .selectAll("line")
+			    .data(graph.links)
+			    .enter().append("line")
+			      .attr("stroke-width", function(d) { return Math.sqrt(d.value); });
+			
+			  var node = svg.append("g")
+			      .attr("class", "nodes")
+			    .selectAll("circle")
+			    .data(graph.nodes)
+			    .enter().append("circle")
+			      .attr("r", 5)
+			      .attr("fill", function(d) { return color(d.group); })
+			      .call(d3.drag()
+			          .on("start", dragstarted)
+			          .on("drag", dragged)
+			          .on("end", dragended));
+			
+			  node.append("title")
+			      .text(function(d) { return d.id; });
+			
+			  simulation
+			      .nodes(graph.nodes)
+			      .on("tick", ticked);
+			
+			  simulation.force("link")
+			      .links(graph.links);
+			
+			  function ticked() {
+			    link
+			        .attr("x1", function(d) { return d.source.x; })
+			        .attr("y1", function(d) { return d.source.y; })
+			        .attr("x2", function(d) { return d.target.x; })
+			        .attr("y2", function(d) { return d.target.y; });
+			
+			    node
+			        .attr("cx", function(d) { return d.x; })
+			        .attr("cy", function(d) { return d.y; });
+			  }
+			});
+			
+			function dragstarted(d) {
+			  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+			  d.fx = d.x;
+			  d.fy = d.y;
+			}
+			
+			function dragged(d) {
+			  d.fx = d3.event.x;
+			  d.fy = d3.event.y;
+			}
+			
+			function dragended(d) {
+			  if (!d3.event.active) simulation.alphaTarget(0);
+			  d.fx = null;
+			  d.fy = null;
+			}
+			
+			</script>
+	    </div>
+	    
+	    <!-- 음악 저장소 -->
+	    <div class="music-repository">
+			<div id="input-form">
+				Search : <input type="text" id="keyword" />
+			</div>
+			<br>
+			<table id="user-table">
+            <thead>
+                <tr>
+                    <th>no</th>
+                    <th>TITLE</th>
+                    <th>ARTIST</th>
+                    <th>SAVE</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Bae bae</td>
+                    <td>Big bang</td>
+                    <td><img onclick="" src="assets/img/plus.png" style="cursor: pointer"></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Time for the moon night</td>
+                    <td>여자친구</td>
+                </tr>
+				<tr>
+                    <td>3</td>
+                    <td>별이 빛나는 밤에</td>
+                    <td>마마무</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>주지마</td>
+                    <td>로꼬, 마마무</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>사랑을 했다</td>
+                    <td>아이콘</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>붕붕</td>
+                    <td>김하온</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>You</td>
+                    <td>멜로망스</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>You</td>
+                    <td>G.Soul</td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td>Dream girl</td>
+                    <td>I.O.I</td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td>Very very very</td>
+                    <td>I.O.I</td>
+                </tr>
+                
+            </tbody>
+        </table>
+        
+        <!-- 검색 기능 -->
+        <script type="text/javascript">
+        	$(document).ready(function() {
+        		
+    	    	$("#keyword").keyup(function() {
+            			var k = $(this).val();
+            			$("#user-table > tbody > tr").hide();
+            			var temp = $("#user-table > tbody > tr > td:nth-child(5n+2):contains('" + k + "')");
+            			
+            			$(temp).parent().show();
+            			
+            			if(k == "") {
+            				$("#user-table > tbody > tr").show();
+            			}
+            		});
+	        	});
+        </script>
+
+ 	    <!-- <script type="text/javascript">
+
+	    var render = function( playList ) {
+		console.log(playList)
+		for( index in playList ) {
+			console.log(index)
+			//console.log(IDs[index][1])
+			var html = 
+				"<li video-id=list'"+ index +"'>" +
+				"<a href='javascript:selectSong("+index+")' class = 'call-song'>"+titleList[index] + "</a>" +
+				"</li>"
+			$( "#play-list" ).append( html );
+			}	
+		}
+		</script> -->
+	   
+     
+ 		</div>
+	    
+	    <!-- 플레이 리스트 -->
+	    <div class="list-area">
+		    <div class="login-list">
+		    	<!-- 로그인 시 유저 아이디를 뿌려줌 -->
+		    	user1
+		    </div>
+		    	
+		    <div class="other-list">other-list</div>
+	    </div>
+	</div>
+
+</body>
+</html>
+
+
+
+
+
+
+

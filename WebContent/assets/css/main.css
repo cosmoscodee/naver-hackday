@@ -1,0 +1,39 @@
+@charset "UTF-8";
+
+.graph-area {
+	border: 1px solid gray;
+}
+
+.music-repository {
+	border: 1px solid gray;
+}
+
+.login-list {
+	border: 1px solid gray;
+}
+
+.other-list {
+	border: 1px solid gray;
+}
+
+#input-form {
+	text-align: center;
+}
+
+#user-table {
+	margine: 0 auto;
+	text-align: center;
+}
+
+#input-form {margin-top: 10px; margin-bottom: 10px;}
+
+#user-table {border-collapse: collapse;}
+#user-table > thead > tr { background-color: #333; color:#fff; }
+#user-table > thead > tr > th { padding: 8px; width: 150px; }
+#user-table > tbody > tr > td { border-bottom: 1px solid gray; padding:8px; }
+
+
+
+
+
+
