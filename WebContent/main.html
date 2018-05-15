@@ -4,26 +4,29 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>music finder</title>
 
-<script type="text/javascript" src="assets/js/jquery/jquery-1.9.0.js"></script>
-<link rel="stylesheet" href="assets/css/main.css">
-<link rel="stylesheet" href="assets/css/index.css">
+<script type="text/javascript" src="assets/js/jquery/jquery-1.9.0.js"></script> <!-- jQuery -->
+<script src="https://d3js.org/d3.v4.min.js"></script> <!-- d3js -->
+
+<link rel="stylesheet" href="assets/css/main.css">	<!-- border, 리스트 테이블 css -->
+<link rel="stylesheet" href="assets/css/index.css"> <!-- css grid, 레이아웃 css -->
+<link rel="stylesheet" href="assets/css/graph.css"> <!-- d3js graph css -->
 <!-- <link rel="stylesheet" href="assets/css/basic.css"> -->
 
 </head>
+			
+<!-- 음악 저장(save_song) + 버튼 눌렀을 때  -->
+<script type="text/javascript">
+	function save_song() {
+		alert("저장하기 함수를 작업하세요!");
+	}
+</script>
 
-<style>
-
-.links line {
-  stroke: #999;
-  stroke-opacity: 0.6;
-}
-
-.nodes circle {
-  stroke: #fff;
-  stroke-width: 1.5px;
-}
-
-</style>
+<!-- 음악 삭제(remove_song) - 버튼 눌렀을 때  -->
+<script type="text/javascript">
+	function remove_song() {
+		alert("음악 삭제 함수를 작업하세요!");
+	}
+</script>
 
 <body>
 	<div class="container">
@@ -31,9 +34,7 @@
 		<!-- d3js 그래프 시각화 부분 -->
 	    <div class="graph-area">
 			<svg width="920" height="800"></svg> <!-- auto를 찾아야댐 -->
-			<script src="https://d3js.org/d3.v4.min.js"></script>
 			<script>
-			
 			var svg = d3.select("svg"),
 			    width = +svg.attr("width"),
 			    height = +svg.attr("height");
@@ -44,8 +45,8 @@
 			    .force("link", d3.forceLink().id(function(d) { return d.id; }))
 			    .force("charge", d3.forceManyBody())
 			    .force("center", d3.forceCenter(width / 2, height / 2));
-		
-			d3.json("miserables.json", function(error, graph) {
+			
+			d3.json("user.json", function(error, graph) {
 			  if (error) throw error;
 			
 			  var link = svg.append("g")
@@ -108,6 +109,7 @@
 			}
 			
 			</script>
+						
 	    </div>
 	    
 	    <!-- 음악 저장소 -->
@@ -130,17 +132,19 @@
                     <td>1</td>
                     <td>Bae bae</td>
                     <td>Big bang</td>
-                    <td><img onclick="" src="assets/img/plus.png" style="cursor: pointer"></td>
+                    <td><img onclick="save_song()" src="assets/img/plus.png" style="cursor: pointer"></td>
                 </tr>
                 <tr>
                     <td>2</td>
                     <td>Time for the moon night</td>
                     <td>여자친구</td>
+                    <td><img onclick="" src="assets/img/plus.png" style="cursor: pointer"></td>
                 </tr>
 				<tr>
                     <td>3</td>
                     <td>별이 빛나는 밤에</td>
                     <td>마마무</td>
+                    <td><img onclick="" src="assets/img/plus.png" style="cursor: pointer"></td>
                 </tr>
                 <tr>
                     <td>4</td>
@@ -185,6 +189,7 @@
         <script type="text/javascript">
         	$(document).ready(function() {
         		
+        		/* keyup 이벤트를 사용해서 검색 기능 구현 */
     	    	$("#keyword").keyup(function() {
             			var k = $(this).val();
             			$("#user-table > tbody > tr").hide();
@@ -192,9 +197,10 @@
             			
             			$(temp).parent().show();
             			
+            			/* 검색 창에 아무 키워드가 없으면 다시 전체 리스트 활성화 */
             			if(k == "") {
             				$("#user-table > tbody > tr").show();
-            			}
+            			} 
             		});
 	        	});
         </script>
@@ -223,6 +229,43 @@
 		    <div class="login-list">
 		    	<!-- 로그인 시 유저 아이디를 뿌려줌 -->
 		    	user1
+		    	<table id="user-table">
+		            <thead>
+		                <tr>
+		                    <th>no</th>
+		                    <th>TITLE</th>
+		                    <th>ARTIST</th>
+		                    <th>SAVE</th>
+		                </tr>
+		            </thead>
+		            <tbody>
+		                <tr>
+		                    <td>1</td>
+		                    <td>Bae bae</td>
+		                    <td>Big bang</td>
+		                    <td><img onclick="remove_song()" src="assets/img/minus.png" style="cursor: pointer"></td>
+		                </tr>
+		                <tr>
+		                    <td>2</td>
+		                    <td>Time for the moon night</td>
+		                    <td>여자친구</td>
+		                    <td><img onclick="" src="assets/img/minus.png" style="cursor: pointer"></td>
+		                </tr>
+						<tr>
+		                    <td>3</td>
+		                    <td>별이 빛나는 밤에</td>
+		                    <td>마마무</td>
+		                    <td><img onclick="" src="assets/img/minus.png" style="cursor: pointer"></td>
+		                </tr>
+		                <tr>
+		                    <td>4</td>
+		                    <td>주지마</td>
+		                    <td>로꼬, 마마무</td>
+		                </tr>
+		           
+		            </tbody>
+		        </table>
+		        
 		    </div>
 		    	
 		    <div class="other-list">other-list</div>
