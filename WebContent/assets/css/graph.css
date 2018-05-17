@@ -2,12 +2,13 @@
 
 .links line {
   stroke: #999;
-  /* stroke-opacity: 0.6; */
+  stroke-opacity: 0.6;
 }
 
 .nodes circle {
   
   stroke: #fff;
+  size: 10px;
   stroke-width: 2px;
   
 }

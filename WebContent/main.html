@@ -8,17 +8,29 @@
 <script src="https://d3js.org/d3.v4.min.js"></script> <!-- d3js -->
 
 <link rel="stylesheet" href="assets/css/main.css">	<!-- border, 리스트 테이블 css -->
-<link rel="stylesheet" href="assets/css/index.css"> <!-- css grid, 레이아웃 css -->
+<link rel="stylesheet" href="assets/css/index.css">	<!-- css grid, 레이아웃 css -->
 <link rel="stylesheet" href="assets/css/graph.css"> <!-- d3js graph css -->
 <!-- <link rel="stylesheet" href="assets/css/basic.css"> -->
 
 </head>
-			
+
 <!-- 음악 저장(save_song) + 버튼 눌렀을 때  -->
 <script type="text/javascript">
 	function save_song() {
-		alert("저장하기 함수를 작업하세요!");
+		console.log("저장하기 함수를 작업하세요!");
+		
+		$.ajax({
+			url: 'http://ec2-52-78-114-100.ap-northeast-2.compute.amazonaws.com/api/v1/test/nothing',
+			success: function(response) {
+				console.log(response);
+			},
+			error: function(error) {
+				console.log(error);
+			}
+		}); 
 	}
+	
+	
 </script>
 
 <!-- 음악 삭제(remove_song) - 버튼 눌렀을 때  -->
@@ -42,32 +54,40 @@
 			var color = d3.scaleOrdinal(d3.schemeCategory20);
 			
 			var simulation = d3.forceSimulation()
-			    .force("link", d3.forceLink().id(function(d) { return d.id; }))
+			    .force("link", d3.forceLink().id(function(d) { return d.id; }).distance(200))
 			    .force("charge", d3.forceManyBody())
 			    .force("center", d3.forceCenter(width / 2, height / 2));
-			
+
 			d3.json("user.json", function(error, graph) {
 			  if (error) throw error;
-			
+		
+			  
 			  var link = svg.append("g")
-			      .attr("class", "links")
-			    .selectAll("line")
-			    .data(graph.links)
-			    .enter().append("line")
-			      .attr("stroke-width", function(d) { return Math.sqrt(d.value); });
-			
+			  		.attr("class", "links")
+				    .selectAll("line")
+				    .data(graph.links)
+				    .enter().append("line")
+				    .attr("stroke-width", function(d) { return d.value; });
+			      /* .attr("stroke-width", function(d) { return Math.sqrt(d.value); }); */
+			  
 			  var node = svg.append("g")
-			      .attr("class", "nodes")
-			    .selectAll("circle")
-			    .data(graph.nodes)
-			    .enter().append("circle")
-			      .attr("r", 5)
-			      .attr("fill", function(d) { return color(d.group); })
-			      .call(d3.drag()
-			          .on("start", dragstarted)
-			          .on("drag", dragged)
-			          .on("end", dragended));
-			
+			     	.attr("class", "nodes")
+				    .selectAll("circle")
+				    .data(graph.nodes)
+				    .enter().append("circle")
+			        .attr("r", 30)
+			        .attr("fill", function(d) { return color(d.group); })
+			        .call(d3.drag()
+		            .on("start", dragstarted)
+		            .on("drag", dragged)
+		            .on("end", dragended))
+		  		    .on("click",function(d) { console.log(d.id); });	
+			  			/* 클릭 했을 때 각 id를 가져옴.
+			  			   ajax로 아디값을 넘김 > 컨트롤러에서 DB접근 > 가공하고 값을 받아서 다시 return > otherlist에 뿌려줌
+			  			*/
+		
+			  			
+			  			
 			  node.append("title")
 			      .text(function(d) { return d.id; });
 			
@@ -217,6 +237,7 @@
 				"<a href='javascript:selectSong("+index+")' class = 'call-song'>"+titleList[index] + "</a>" +
 				"</li>"
 			$( "#play-list" ).append( html );
+			>> 각 유저마다 달라야대니 $("[class=blog-list]").children("li").remove(); 이코드를 참초해서 지워주자 리셋.
 			}	
 		}
 		</script> -->
@@ -274,10 +295,3 @@
 
 </body>
 </html>
-
-
-
-
-
-
-

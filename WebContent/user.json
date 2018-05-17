@@ -4,14 +4,16 @@
     {"id": "user2", "group": 2},
     {"id": "user3", "group": 3},
     {"id": "user4", "group": 4},
-   	{"id": "user5", "group": 5}
+   	{"id": "user5", "group": 5},
+   	{"id": "user6", "group": 5}
+   	
 ],
  
   "links": [
-    {"source": "user1", "target": "user2", "value": 1},
-    {"source": "user1", "target": "user3", "value": 4},
-    {"source": "user1", "target": "user4", "value": 10},
-    {"source": "user1", "target": "user5", "value": 22}
-
+    {"source": "user1", "target": "user2", "value": 5},
+    {"source": "user1", "target": "user3", "value": 8},
+    {"source": "user1", "target": "user4", "value": 15},
+    {"source": "user1", "target": "user5", "value": 2},
+    {"source": "user3", "target": "user6", "value": 10}
  ]
 }
