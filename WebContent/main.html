@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="veiwport" http-equiv="Content-Type" content="width=device-width, initial-scale=1, text/html; charset=UTF-8">
 <title>music finder</title>
 
 <script type="text/javascript" src="assets/js/jquery/jquery-1.9.0.js"></script> <!-- jQuery -->
@@ -10,9 +10,23 @@
 <link rel="stylesheet" href="assets/css/main.css">	<!-- border, 리스트 테이블 css -->
 <link rel="stylesheet" href="assets/css/index.css">	<!-- css grid, 레이아웃 css -->
 <link rel="stylesheet" href="assets/css/graph.css"> <!-- d3js graph css -->
-<!-- <link rel="stylesheet" href="assets/css/basic.css"> -->
+<link rel="stylesheet" href="assets/css/checkbox.css"> <!-- checkbox css -->
+<link rel="stylesheet" href="assets/css/searchnav.css"> <!-- music-repository-search css -->
 
 </head>
+
+<!-- DB 뮤직 리스트를 불러오기 -->
+<!-- <script type="text/javascript">
+for( index in musicList ) {
+	var html =
+		"<tr>"+
+		"<td>"+ index + "</td>" +
+		"<td>"+ /* .title  +*/ "</td>" +
+		"<td>"+ /* .artist + */ "</td>" +
+		//"<td>"+"<img onclick="'save_song()'+" src="'assets/img/plus.png'"+"" style='cursor': pointer" + ">"+"</td>"
+		$("#music-repository-add-list").append(html);
+}
+</script> -->
 
 <!-- 음악 저장(save_song) + 버튼 눌렀을 때  -->
 <script type="text/javascript">
@@ -23,6 +37,18 @@
 			url: 'http://ec2-52-78-114-100.ap-northeast-2.compute.amazonaws.com/api/v1/test/nothing',
 			success: function(response) {
 				console.log(response);
+				
+				/* Login user music list에 곡 추가 */
+				/* for( index in playList ) {
+					var html =
+						"<tr>"+
+						"<td>"+ index + "</td>" +
+						"<td>"+ title + "</td>" +
+						"<td>"+ artist + "</td>" +
+						//"<td>"+"<img onclick="'save_song()'+" src="'assets/img/minus.png'""+" style='cursor': pointer" + ">"+"</td>"
+						$("#login-add-list").append(html);
+				} */
+				
 			},
 			error: function(error) {
 				console.log(error);
@@ -40,16 +66,120 @@
 	}
 </script>
 
-<body>
-	<div class="container">
+<!-- Checkbox -->
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#artist").click(function() {
 		
-		<!-- d3js 그래프 시각화 부분 -->
+		var value = $(this).val();
+		
+		$.ajax({
+			url: 'http://ec2-52-78-114-100.ap-northeast-2.compute.amazonaws.com/api/v1/test/nothing',
+			success: function(response) {
+				alert(value);
+			},
+			error: function(error) {
+				console.log(error);
+			}
+		}); 
+	});
+});
+
+</script>
+
+<script>
+function openNav() {
+    document.getElementById("mySidenav").style.width = "400px";
+    document.getElementById("main").style.marginLeft = "400px";
+}
+
+function closeNav() {
+    document.getElementById("mySidenav").style.width = "0";
+    document.getElementById("main").style.marginLeft= "0";
+}
+</script>
+
+<body>
+	
+	<div id="mySidenav" class="sidenav">
+ 		<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+ 		<!-- 음악 저장소 -->
+	    <div class="music-repository">
+			<div id="input-form">
+				Search : <input type="text" id="keyword" />
+			</div>
+			<br>
+			<table id="music-repository-table">
+            <thead id="music-repository-add-list">
+                <tr>
+                    <th>no</th>
+                    <th>TITLE</th>
+                    <th>ARTIST</th>
+                    <th>SAVE</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Bae bae</td>
+                    <td>Big bang</td>
+                    <td><img onclick="save_song()" src="assets/img/plus.png" style="cursor: pointer"></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <!-- 검색 기능 -->
+        <script type="text/javascript">
+        	$(document).ready(function() {
+        		
+        		/* keyup 이벤트를 사용해서 검색 기능 구현 */
+    	    	$("#keyword").keyup(function() {
+            			var k = $(this).val();
+            			$("#music-repository-table > tbody > tr").hide();
+            			var temp = $("#music-repository-table > tbody > tr > td:nth-child(5n+2):contains('" + k + "')");
+            			
+            			$(temp).parent().show();
+            			
+            			/* 검색 창에 아무 키워드가 없으면 다시 전체 리스트 활성화 */
+            			if(k == "") {
+            				$("#music-repository-table > tbody > tr").show();
+            			}
+            		});
+	        	});
+        </script>
+	
+     
+ 		</div>
+	</div>
+    <div id="main">
+		<span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Search</span>
+	</div>
+	
+	<div class="container">
+		<!-- Search Side -->
 	    <div class="graph-area">
+	    	
+	    	<!-- CheckBox -->
+	    	<br>
+			<div class="checks">
+				  <input type="checkbox" id="genre" name="genre" value="장르" checked="checked">
+				  <label for="genre">장르</label>
+				  <input type="checkbox" id="artist" name="artist" value="가수">
+				  <label for="artist">가수</label>
+				  <input type="checkbox" id="writer" name="writer" value="작사">
+				  <label for="writer">작사</label>
+				  <input type="checkbox" id="composer" name="composer" value="작곡가">
+				  <label for="composer">작곡가</label>
+			</div>
+	
+			<!-- d3js 그래프 시각화 부분 -->	   		
 			<svg width="920" height="800"></svg> <!-- auto를 찾아야댐 -->
 			<script>
 			var svg = d3.select("svg"),
 			    width = +svg.attr("width"),
 			    height = +svg.attr("height");
+			
+			
 			
 			var color = d3.scaleOrdinal(d3.schemeCategory20);
 			
@@ -71,25 +201,60 @@
 			      /* .attr("stroke-width", function(d) { return Math.sqrt(d.value); }); */
 			  
 			  var node = svg.append("g")
-			     	.attr("class", "nodes")
-				    .selectAll("circle")
-				    .data(graph.nodes)
-				    .enter().append("circle")
-			        .attr("r", 30)
-			        .attr("fill", function(d) { return color(d.group); })
-			        .call(d3.drag()
-		            .on("start", dragstarted)
-		            .on("drag", dragged)
-		            .on("end", dragended))
-		  		    .on("click",function(d) { console.log(d.id); });	
-			  			/* 클릭 했을 때 각 id를 가져옴.
+					  .attr("class", "nodes")
+					  .selectAll(".node")
+					  .data(graph.nodes)
+					  .enter().append("g")
+					  .attr("class", "node")
+					  .call(d3.drag()
+					    .on("start", dragstarted)
+					    .on("drag", dragged)
+					    .on("end", dragended))
+		  		    .on("click", function(d) { 
+		  		    	/* 클릭 했을 때 각 id를 가져옴.
 			  			   ajax로 아디값을 넘김 > 컨트롤러에서 DB접근 > 가공하고 값을 받아서 다시 return > otherlist에 뿌려줌
 			  			*/
-		
+		  		    	$.ajax({
+			  				url: 'http://ec2-52-78-114-100.ap-northeast-2.compute.amazonaws.com/api/v1/test/nothing',
+			  				success: function(response) {
+			  					console.log(response);
+			  					console.log(d.id);
+			  					
+			  					/*
+								// 가공한 값 받아서 other list에 뿌려주기
+								for( index in musicList ) {
+									var html =
+										"<tr>"+
+										"<td>"+ index + "</td>" +
+										"<td>"+ title + "</td>" +
+										"<td>"+ artist + "</td>" +
+										"<td>"+"<img onclick="'save_song()'+" src="'assets/img/plus.png'""+" style='cursor': pointer" + ">"+"</td>"
+										$("#login-add-list").append(html);
+										/* if login-user-list에 이미 있는 곡이면 plus마크가 없어야됨. 없는 곡이면 강조해줘야함 (표시) */
+										/* emphasis-list 곡은 tr에 #emphasis-list를 추가하거나, style에 css 그냥 추가  } */
+								
+			  					
+			  				},
+			  				error: function(error) {
+			  					console.log(error);
+			  				} 	
+			  		    		
+			  		    });
+		  		    });
 			  			
 			  			
-			  node.append("title")
-			      .text(function(d) { return d.id; });
+			
+	  			node.append("circle")
+	  		  .attr("r", 20)
+	  		  .attr("fill", function(d) { return color(d.group); });
+			  			   
+ 			  node.append("title")
+           		  .text(function(d) {return d.id;});
+ 			  
+ 			 node.append("text")
+ 			  .text(function(d) { return d.id; })
+ 			  .attr('x', -20)
+ 		      .attr('y', -20);
 			
 			  simulation
 			      .nodes(graph.nodes)
@@ -107,7 +272,8 @@
 			
 			    node
 			        .attr("cx", function(d) { return d.x; })
-			        .attr("cy", function(d) { return d.y; });
+			        .attr("cy", function(d) { return d.y; })
+			    .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
 			  }
 			});
 			
@@ -132,166 +298,57 @@
 						
 	    </div>
 	    
-	    <!-- 음악 저장소 -->
-	    <div class="music-repository">
-			<div id="input-form">
-				Search : <input type="text" id="keyword" />
-			</div>
-			<br>
+	    <!-- 다른 사람 리스트 -->
+	    <div class="other-list">
+	    	Other User List ( id)
+	    	
 			<table id="user-table">
-            <thead>
-                <tr>
-                    <th>no</th>
-                    <th>TITLE</th>
-                    <th>ARTIST</th>
-                    <th>SAVE</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Bae bae</td>
-                    <td>Big bang</td>
-                    <td><img onclick="save_song()" src="assets/img/plus.png" style="cursor: pointer"></td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Time for the moon night</td>
-                    <td>여자친구</td>
-                    <td><img onclick="" src="assets/img/plus.png" style="cursor: pointer"></td>
-                </tr>
-				<tr>
-                    <td>3</td>
-                    <td>별이 빛나는 밤에</td>
-                    <td>마마무</td>
-                    <td><img onclick="" src="assets/img/plus.png" style="cursor: pointer"></td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td>주지마</td>
-                    <td>로꼬, 마마무</td>
-                </tr>
-                <tr>
-                    <td>5</td>
-                    <td>사랑을 했다</td>
-                    <td>아이콘</td>
-                </tr>
-                <tr>
-                    <td>6</td>
-                    <td>붕붕</td>
-                    <td>김하온</td>
-                </tr>
-                <tr>
-                    <td>7</td>
-                    <td>You</td>
-                    <td>멜로망스</td>
-                </tr>
-                <tr>
-                    <td>8</td>
-                    <td>You</td>
-                    <td>G.Soul</td>
-                </tr>
-                <tr>
-                    <td>9</td>
-                    <td>Dream girl</td>
-                    <td>I.O.I</td>
-                </tr>
-                <tr>
-                    <td>10</td>
-                    <td>Very very very</td>
-                    <td>I.O.I</td>
-                </tr>
-                
-            </tbody>
-        </table>
-        
-        <!-- 검색 기능 -->
-        <script type="text/javascript">
-        	$(document).ready(function() {
-        		
-        		/* keyup 이벤트를 사용해서 검색 기능 구현 */
-    	    	$("#keyword").keyup(function() {
-            			var k = $(this).val();
-            			$("#user-table > tbody > tr").hide();
-            			var temp = $("#user-table > tbody > tr > td:nth-child(5n+2):contains('" + k + "')");
-            			
-            			$(temp).parent().show();
-            			
-            			/* 검색 창에 아무 키워드가 없으면 다시 전체 리스트 활성화 */
-            			if(k == "") {
-            				$("#user-table > tbody > tr").show();
-            			} 
-            		});
-	        	});
-        </script>
-
- 	    <!-- <script type="text/javascript">
-
-	    var render = function( playList ) {
-		console.log(playList)
-		for( index in playList ) {
-			console.log(index)
-			//console.log(IDs[index][1])
-			var html = 
-				"<li video-id=list'"+ index +"'>" +
-				"<a href='javascript:selectSong("+index+")' class = 'call-song'>"+titleList[index] + "</a>" +
-				"</li>"
-			$( "#play-list" ).append( html );
-			>> 각 유저마다 달라야대니 $("[class=blog-list]").children("li").remove(); 이코드를 참초해서 지워주자 리셋.
-			}	
-		}
-		</script> -->
-	   
-     
+	            <thead>
+	                <tr>
+	                    <th>no</th>
+	                    <th>TITLE</th>
+	                    <th>ARTIST</th>
+	                    <th>SAVE</th>
+	                </tr>
+	            </thead>
+	            <tbody>
+	                <tr>
+	                    <td>1</td>
+	                    <td>Bae bae</td>
+	                    <td>Big bang</td>
+	                    <td><img onclick="save_song()" src="assets/img/plus.png" style="cursor: pointer"></td>
+	                </tr>
+	            </tbody>
+	        </table>
+			
  		</div>
 	    
-	    <!-- 플레이 리스트 -->
-	    <div class="list-area">
-		    <div class="login-list">
-		    	<!-- 로그인 시 유저 아이디를 뿌려줌 -->
-		    	user1
-		    	<table id="user-table">
-		            <thead>
-		                <tr>
-		                    <th>no</th>
-		                    <th>TITLE</th>
-		                    <th>ARTIST</th>
-		                    <th>SAVE</th>
-		                </tr>
-		            </thead>
-		            <tbody>
-		                <tr>
-		                    <td>1</td>
-		                    <td>Bae bae</td>
-		                    <td>Big bang</td>
-		                    <td><img onclick="remove_song()" src="assets/img/minus.png" style="cursor: pointer"></td>
-		                </tr>
-		                <tr>
-		                    <td>2</td>
-		                    <td>Time for the moon night</td>
-		                    <td>여자친구</td>
-		                    <td><img onclick="" src="assets/img/minus.png" style="cursor: pointer"></td>
-		                </tr>
-						<tr>
-		                    <td>3</td>
-		                    <td>별이 빛나는 밤에</td>
-		                    <td>마마무</td>
-		                    <td><img onclick="" src="assets/img/minus.png" style="cursor: pointer"></td>
-		                </tr>
-		                <tr>
-		                    <td>4</td>
-		                    <td>주지마</td>
-		                    <td>로꼬, 마마무</td>
-		                </tr>
-		           
-		            </tbody>
-		        </table>
-		        
-		    </div>
-		    	
-		    <div class="other-list">other-list</div>
+   		<!-- 로그인 플레이 리스트 -->
+	    <div class="login-list">
+	    	<!-- 로그인 시 유저 아이디를 뿌려줌 -->
+	    	My Music List (user id)
+	    	
+	    	<table id="user-table">
+	            <thead id="login-add-list">
+	                <tr>
+	                    <th>no</th>
+	                    <th>TITLE</th>
+	                    <th>ARTIST</th>
+	                    <th>SAVE</th>
+	                </tr>
+	            </thead>
+	            <tbody>
+	                <tr>
+	                    <td>1</td>
+	                    <td>Bae bae</td>
+	                    <td>Big bang</td>
+	                    <td><img onclick="remove_song()" src="assets/img/minus.png" style="cursor: pointer"></td>
+	                </tr>
+	            </tbody>
+	        </table>
 	    </div>
-	</div>
+    </div> <!-- close container -->
+
 
 </body>
 </html>
