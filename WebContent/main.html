@@ -12,58 +12,201 @@
 <link rel="stylesheet" href="assets/css/graph.css"> <!-- d3js graph css -->
 <link rel="stylesheet" href="assets/css/checkbox.css"> <!-- checkbox css -->
 <link rel="stylesheet" href="assets/css/searchnav.css"> <!-- music-repository-search css -->
+<link rel="stylesheet" href="assets/css/logout.css"> <!-- logout css -->
 
 </head>
 
-<!-- DB 뮤직 리스트를 불러오기 -->
-<!-- <script type="text/javascript">
-for( index in musicList ) {
-	var html =
-		"<tr>"+
-		"<td>"+ index + "</td>" +
-		"<td>"+ /* .title  +*/ "</td>" +
-		"<td>"+ /* .artist + */ "</td>" +
-		//"<td>"+"<img onclick="'save_song()'+" src="'assets/img/plus.png'"+"" style='cursor': pointer" + ">"+"</td>"
-		$("#music-repository-add-list").append(html);
-}
-</script> -->
+<!-- graph all -->
+<script type="text/javascript">
+$(document).ready(function(){ 
+	$.ajax({
+		url: 'http://210.89.191.220:42500/api/v1/graph/all',
+		type: 'GET',
+		success: function(response) {
+			console.log("graphALLL")
+				d3js();
+			
+		},
+		error: function(error) {
+			console.log(error);
+		}
+	}); 
+});
+</script>
 
+<!-- DB 뮤직 리스트를 불러오기 -->
+<script type="text/javascript">
+var global_d_id = "";
+$(document).ready(function(){ 
+	$.ajax({
+		url: 'http://210.89.191.220:42500/api/v1/music/all',
+		type: 'GET',
+		success: function(response) {
+			var playList = response.data;
+			var count = 1;
+			
+			$.each(playList, function () {
+				var html =
+					"<tr>"+
+					"<td>"+ count + "</td>" +
+					"<td>"+ this.track_title + "</td>" +
+					"<td>"+ this.artist_name + "</td>" +
+					"<td>"+"<img id="+this.track_id+" onclick='save_song(this)'" + " src='assets/img/plus.png'" + " style='cursor: pointer'" +">"+"</td>"
+					
+					$("#music-repository-add-list").append(html);
+					
+					count++;
+			});
+		
+		},
+		error: function(error) {
+			console.log(error);
+		}
+	}); 
+});
+
+</script>
+
+<!-- 시작 > MY 리스트를 불러오기 -->
+<script type="text/javascript">
+var globalJson = "";
+
+$(document).ready(function(){
+	myList(); 
+});  
+	function myList() {
+		 $.ajax({
+				url: 'http://210.89.191.220:42500/api/v1/user/playList',
+				type: 'GET',
+				success: function(response) {
+					var playList = response.data.playList;									
+					globalJson = playList.userId;
+					
+					var count = 1;
+					
+					$("#login-add-list tr").remove();
+					//document.getElementById("#login-add-list").innerHTML = "";
+					
+					
+					$.each(playList, function () {
+						var html =
+							"<tr>"+
+							"<td>"+ count + "</td>" +
+							"<td>"+ this.track_title + "</td>" +
+							"<td>"+ this.artist_name + "</td>" +
+							"<td>"+"<img id="+this.track_id+" onclick='remove_song(this)'" + " src='assets/img/minus.png'" + " style='cursor: pointer'" +">"+"</td>"
+							
+							$("#login-add-list").append(html);
+							
+							count++;
+					});
+				
+				},
+				error: function(error) {
+					console.log(error);
+				}
+			});
+	} 
+
+	function otherList(){
+		 $.ajax({
+				url: 'http://210.89.191.220:42500/api/v1/music/compare',
+				type: 'POST',
+				data: {the_other_user_id: global_d_id},
+				success: function(response) {
+					var playList = response.data.playList;
+					console.log("playList : " + JSON.stringify(playList));
+					var count = 1;
+					$("#other-add-list tr").remove();
+					$("#other-add-list td").remove();
+					
+					$.each(playList, function () {
+						var html =
+							"<tr id="+"changeBackgroundColor"+">"+
+							"<td>"+ count + "</td>" +
+							"<td>"+ this.track_title + "</td>" +
+							"<td>"+ this.artist_name + "</td>"
+						
+						var iconHtml = "<td>"+"<img id="+this.track_id+" onclick='save_song(this)'" + " src='assets/img/plus.png'" + " style='cursor: pointer'" +">"+"</td>"
+						
+						// var styleTrack = document.getElementById("#changeBackgroundColor");
+							
+						var emptyHtml = "<td>"+"</td>"
+						
+							console.log(this.track_id)
+							if(this.diff == false) {
+								$("#other-add-list").append(html);
+								$("#other-add-list").append(iconHtml);
+								// styleTrack.setAttribute("style", "bgcolor: #8cff66;");
+								// styleTrack.style.background = '#8cff66';
+								
+								
+							} else {
+								$("#other-add-list").append(html);
+							}
+							
+							$("#other-add-list").append("</tr>");
+							count++;
+					});	
+				},
+				error: function(error) {
+					console.log(error);
+				}
+	    	 
+	    	 
+			}); 
+	}
+</script>
 <!-- 음악 저장(save_song) + 버튼 눌렀을 때  -->
 <script type="text/javascript">
-	function save_song() {
-		console.log("저장하기 함수를 작업하세요!");
-		
-		$.ajax({
-			url: 'http://ec2-52-78-114-100.ap-northeast-2.compute.amazonaws.com/api/v1/test/nothing',
-			success: function(response) {
-				console.log(response);
-				
-				/* Login user music list에 곡 추가 */
-				/* for( index in playList ) {
-					var html =
-						"<tr>"+
-						"<td>"+ index + "</td>" +
-						"<td>"+ title + "</td>" +
-						"<td>"+ artist + "</td>" +
-						//"<td>"+"<img onclick="'save_song()'+" src="'assets/img/minus.png'""+" style='cursor': pointer" + ">"+"</td>"
-						$("#login-add-list").append(html);
-				} */
-				
-			},
-			error: function(error) {
-				console.log(error);
+function save_song(element) {
+	console.log(element.id);
+	$.ajax({
+		url: 'http://210.89.191.220:42500/api/v1/music/my',
+		type: 'POST',
+		data: {track_id: element.id},
+		success: function(response) {
+			
+			var code = response.code;
+			
+			if(code == 600) {
+				alert("중복입니다.");
+			} else {
+				myList();
+				if(global_d_id != ""){
+					otherList();
+					d3js();
+				}
 			}
-		}); 
-	}
+		},
+		error: function(error) {
+			console.log(error);
+		}
+	}); 
+}
 	
 	
 </script>
 
 <!-- 음악 삭제(remove_song) - 버튼 눌렀을 때  -->
 <script type="text/javascript">
-	function remove_song() {
-		alert("음악 삭제 함수를 작업하세요!!");
-	}
+function remove_song(element) {
+	console.log("DELETE" + element.id);
+	$.ajax({
+		url: 'http://210.89.191.220:42500/api/v1/music/my',
+		type: 'DELETE',
+		data: {track_id: element.id},
+		success: function(response) {
+			myList();
+			if(global_d_id != "")
+				otherList();
+				d3js();
+		},
+		error: function(error) {
+			console.log(error);
+		}
+	}); 
+}
 </script>
 
 <!-- Checkbox -->
@@ -100,9 +243,12 @@ function closeNav() {
 </script>
 
 <body>
-	
 	<div id="mySidenav" class="sidenav">
- 		<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+ 		<a href="http://localhost:5050/hackday/login.html">
+ 			<input type="button" value="Logout" class="logout"/>
+		</a> 
+		<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+ 		
  		<!-- 음악 저장소 -->
 	    <div class="music-repository">
 			<div id="input-form">
@@ -110,7 +256,7 @@ function closeNav() {
 			</div>
 			<br>
 			<table id="music-repository-table">
-            <thead id="music-repository-add-list">
+            <thead>
                 <tr>
                     <th>no</th>
                     <th>TITLE</th>
@@ -118,13 +264,8 @@ function closeNav() {
                     <th>SAVE</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Bae bae</td>
-                    <td>Big bang</td>
-                    <td><img onclick="save_song()" src="assets/img/plus.png" style="cursor: pointer"></td>
-                </tr>
+            <tbody id="music-repository-add-list">
+                
             </tbody>
         </table>
         
@@ -152,7 +293,7 @@ function closeNav() {
  		</div>
 	</div>
     <div id="main">
-		<span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Search</span>
+		<span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Music Repository</span>
 	</div>
 	
 	<div class="container">
@@ -175,125 +316,101 @@ function closeNav() {
 			<!-- d3js 그래프 시각화 부분 -->	   		
 			<svg width="920" height="800"></svg> <!-- auto를 찾아야댐 -->
 			<script>
-			var svg = d3.select("svg"),
-			    width = +svg.attr("width"),
-			    height = +svg.attr("height");
+			function d3js() {
+				var svg = d3.select("svg"),
+				    width = +svg.attr("width"),
+				    height = +svg.attr("height");
+				
+				
+				var color = d3.scaleOrdinal(d3.schemeCategory20);
+				
+				var simulation = d3.forceSimulation()
+				    .force("link", d3.forceLink().id(function(d) { return d.id; }).distance(200))
+				    .force("charge", d3.forceManyBody())
+				    .force("center", d3.forceCenter(width / 2, height / 2));
+				
+				
+		d3.json("user.json", function(error, graph) {
+				  if (error) throw error;
 			
-			
-			
-			var color = d3.scaleOrdinal(d3.schemeCategory20);
-			
-			var simulation = d3.forceSimulation()
-			    .force("link", d3.forceLink().id(function(d) { return d.id; }).distance(200))
-			    .force("charge", d3.forceManyBody())
-			    .force("center", d3.forceCenter(width / 2, height / 2));
-
-			d3.json("user.json", function(error, graph) {
-			  if (error) throw error;
-		
-			  
-			  var link = svg.append("g")
-			  		.attr("class", "links")
-				    .selectAll("line")
-				    .data(graph.links)
-				    .enter().append("line")
-				    .attr("stroke-width", function(d) { return d.value; });
-			      /* .attr("stroke-width", function(d) { return Math.sqrt(d.value); }); */
-			  
-			  var node = svg.append("g")
-					  .attr("class", "nodes")
-					  .selectAll(".node")
-					  .data(graph.nodes)
-					  .enter().append("g")
-					  .attr("class", "node")
-					  .call(d3.drag()
-					    .on("start", dragstarted)
-					    .on("drag", dragged)
-					    .on("end", dragended))
-		  		    .on("click", function(d) { 
-		  		    	/* 클릭 했을 때 각 id를 가져옴.
-			  			   ajax로 아디값을 넘김 > 컨트롤러에서 DB접근 > 가공하고 값을 받아서 다시 return > otherlist에 뿌려줌
-			  			*/
-		  		    	$.ajax({
-			  				url: 'http://ec2-52-78-114-100.ap-northeast-2.compute.amazonaws.com/api/v1/test/nothing',
-			  				success: function(response) {
-			  					console.log(response);
-			  					console.log(d.id);
-			  					
-			  					/*
-								// 가공한 값 받아서 other list에 뿌려주기
-								for( index in musicList ) {
-									var html =
-										"<tr>"+
-										"<td>"+ index + "</td>" +
-										"<td>"+ title + "</td>" +
-										"<td>"+ artist + "</td>" +
-										"<td>"+"<img onclick="'save_song()'+" src="'assets/img/plus.png'""+" style='cursor': pointer" + ">"+"</td>"
-										$("#login-add-list").append(html);
-										/* if login-user-list에 이미 있는 곡이면 plus마크가 없어야됨. 없는 곡이면 강조해줘야함 (표시) */
-										/* emphasis-list 곡은 tr에 #emphasis-list를 추가하거나, style에 css 그냥 추가  } */
-								
-			  					
-			  				},
-			  				error: function(error) {
-			  					console.log(error);
-			  				} 	
-			  		    		
-			  		    });
+				  
+				  var link = svg.append("g")
+				  		.attr("class", "links")
+					    .selectAll("line")
+					    .data(graph.links)
+					    .enter().append("line")
+					    .attr("stroke-width", function(d) { return d.value; });
+				      /* .attr("stroke-width", function(d) { return Math.sqrt(d.value); }); */
+				  
+				  var node = svg.append("g")
+						  .attr("class", "nodes")
+						  .selectAll(".node")
+						  .data(graph.nodes)
+						  .enter().append("g")
+						  .attr("class", "node")
+						  .call(d3.drag()
+						    .on("start", dragstarted)
+						    .on("drag", dragged)
+						    .on("end", dragended))
+			  		    .on("click", function(d) { 
+			  		    	console.log("gg");
+			  		    	global_d_id = d.id;
+			  		    	otherList();
+						
 		  		    });
-			  			
-			  			
-			
-	  			node.append("circle")
-	  		  .attr("r", 20)
-	  		  .attr("fill", function(d) { return color(d.group); });
-			  			   
- 			  node.append("title")
-           		  .text(function(d) {return d.id;});
- 			  
- 			 node.append("text")
- 			  .text(function(d) { return d.id; })
- 			  .attr('x', -20)
- 		      .attr('y', -20);
-			
-			  simulation
-			      .nodes(graph.nodes)
-			      .on("tick", ticked);
-			
-			  simulation.force("link")
-			      .links(graph.links);
-			
-			  function ticked() {
-			    link
-			        .attr("x1", function(d) { return d.source.x; })
-			        .attr("y1", function(d) { return d.source.y; })
-			        .attr("x2", function(d) { return d.target.x; })
-			        .attr("y2", function(d) { return d.target.y; });
-			
-			    node
-			        .attr("cx", function(d) { return d.x; })
-			        .attr("cy", function(d) { return d.y; })
-			    .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
-			  }
-			});
-			
-			function dragstarted(d) {
-			  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-			  d.fx = d.x;
-			  d.fy = d.y;
+				  			
+				  			
+				
+		  			node.append("circle")
+		  		  .attr("r", 30)
+		  		  .attr("fill", function(d) { return color(d.group); });
+				  			   
+	 			  node.append("title")
+	           		  .text(function(d) {return d.id;});
+	 			  
+	 			 node.append("text")
+	 			  .text(function(d) { return d.id; })
+	 			  .attr('x', -20)
+	 		      .attr('y', -20);
+				
+				  simulation
+				      .nodes(graph.nodes)
+				      .on("tick", ticked);
+				
+				  simulation.force("link")
+				      .links(graph.links);
+				
+				  function ticked() {
+				    link
+				        .attr("x1", function(d) { return d.source.x; })
+				        .attr("y1", function(d) { return d.source.y; })
+				        .attr("x2", function(d) { return d.target.x; })
+				        .attr("y2", function(d) { return d.target.y; });
+				
+				    node
+				        .attr("cx", function(d) { return d.x; })
+				        .attr("cy", function(d) { return d.y; })
+				    .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+				  }
+				});
+				
+				function dragstarted(d) {
+				  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+				  d.fx = d.x;
+				  d.fy = d.y;
+				}
+				
+				function dragged(d) {
+				  d.fx = d3.event.x;
+				  d.fy = d3.event.y;
+				}
+				
+				function dragended(d) {
+				  if (!d3.event.active) simulation.alphaTarget(0);
+				  d.fx = null;
+				  d.fy = null;
+				}
 			}
-			
-			function dragged(d) {
-			  d.fx = d3.event.x;
-			  d.fy = d3.event.y;
-			}
-			
-			function dragended(d) {
-			  if (!d3.event.active) simulation.alphaTarget(0);
-			  d.fx = null;
-			  d.fy = null;
-			}
-			
 			</script>
 						
 	    </div>
@@ -311,13 +428,8 @@ function closeNav() {
 	                    <th>SAVE</th>
 	                </tr>
 	            </thead>
-	            <tbody>
-	                <tr>
-	                    <td>1</td>
-	                    <td>Bae bae</td>
-	                    <td>Big bang</td>
-	                    <td><img onclick="save_song()" src="assets/img/plus.png" style="cursor: pointer"></td>
-	                </tr>
+	            <tbody id="other-add-list">
+	                
 	            </tbody>
 	        </table>
 			
@@ -329,7 +441,7 @@ function closeNav() {
 	    	My Music List (user id)
 	    	
 	    	<table id="user-table">
-	            <thead id="login-add-list">
+	            <thead>
 	                <tr>
 	                    <th>no</th>
 	                    <th>TITLE</th>
@@ -337,13 +449,8 @@ function closeNav() {
 	                    <th>SAVE</th>
 	                </tr>
 	            </thead>
-	            <tbody>
-	                <tr>
-	                    <td>1</td>
-	                    <td>Bae bae</td>
-	                    <td>Big bang</td>
-	                    <td><img onclick="remove_song()" src="assets/img/minus.png" style="cursor: pointer"></td>
-	                </tr>
+	            <tbody id="login-add-list">
+	              
 	            </tbody>
 	        </table>
 	    </div>

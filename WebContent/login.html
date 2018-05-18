@@ -4,23 +4,50 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>music finder</title>
 
+<script type="text/javascript" src="assets/js/jquery/jquery-1.9.0.js"></script> <!-- jQuery -->
 <link rel="stylesheet" href="assets/css/login.css">
 
 </head>
+
+<script type="text/javascript">
+function login() {
+	var userid = document.getElementById("userid").value;
+	
+$.ajax({
+		url: 'http://210.89.191.220:42500/api/v1/user/login',
+		data: {user_id :userid},
+		type: 'POST',
+		success: function(response) {
+			/* console.log(JSON.stringify(response)); */
+			var user = response.data.isOurUser;
+			
+			/* if(user == true) {
+				window.location.replace("http://localhost:5050/hackday/main.html");
+			} else {
+				alert("다시 로긴하세요.");
+			} */
+		},
+		error: function(error) {
+			console.log(error);
+		}
+	});
+}
+</script>
+
 <body>
 	<div class="login-box">
     <img src="assets/img/avatar.png" class="avatar">
         <h1>Login Here</h1>
         <h2>Welcome to Music Finder</h2>
             <br>
-            <form action="main.html" method="GET">
-	            <p>Username</p>
-	            <input type="text" name="username" placeholder="Enter Username">
-	            <br><br>
-	            <input type="submit" value="Login">
-	            <br>
-	            <br>
-            </form>
+            
+            <p>Username</p>
+            <input type="text" id="userid" name="username" placeholder="Enter Username">
+            <br><br>
+            <input onclick="login()" type="submit" value="Login" >
+            <br>
+            <br>
+            
         </div>
 </body>
 </html>

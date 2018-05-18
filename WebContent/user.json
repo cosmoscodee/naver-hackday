@@ -1,14 +1,13 @@
 {
   "nodes": [
-    {"id": "user1", "name": "user1", "group": 1},
+    {"id": "user1", "group": 1},
     {"id": "user2", "group": 2},
     {"id": "user3", "group": 3},
     {"id": "user4", "group": 4},
-   	{"id": "user5", "group": 5},
-   	{"id": "user6", "group": 5}
+   	{"id": "user5", "group": 5}
    	
 ],
- 
+
   "links": [
     {"source": "user1", "target": "user2", "value": 5},
     {"source": "user1", "target": "user3", "value": 8},
