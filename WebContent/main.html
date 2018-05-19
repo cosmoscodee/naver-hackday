@@ -1,30 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="veiwport" http-equiv="Content-Type" content="width=device-width, initial-scale=1, text/html; charset=UTF-8">
+<meta name="veiwport" http-equiv="Content-Type"
+	content="width=device-width, initial-scale=1, text/html; charset=UTF-8">
 <title>music finder</title>
 
-<script type="text/javascript" src="assets/js/jquery/jquery-1.9.0.js"></script> <!-- jQuery -->
-<script src="https://d3js.org/d3.v4.min.js"></script> <!-- d3js -->
+<!-- jQuery -->
+<script type="text/javascript" src="assets/js/jquery/jquery-1.9.0.js"></script>
+<!-- d3js -->
+<script src="https://d3js.org/d3.v4.min.js"></script>
 
-<link rel="stylesheet" href="assets/css/main.css">	<!-- border, 리스트 테이블 css -->
-<link rel="stylesheet" href="assets/css/index.css">	<!-- css grid, 레이아웃 css -->
-<link rel="stylesheet" href="assets/css/graph.css"> <!-- d3js graph css -->
-<link rel="stylesheet" href="assets/css/checkbox.css"> <!-- checkbox css -->
-<link rel="stylesheet" href="assets/css/searchnav.css"> <!-- music-repository-search css -->
-<link rel="stylesheet" href="assets/css/logout.css"> <!-- logout css -->
+<!-- border, 리스트 테이블 css -->
+<link rel="stylesheet" href="assets/css/main.css">
+<!-- css grid, 레이아웃 css -->
+<link rel="stylesheet" href="assets/css/index.css">
+<!-- d3js graph css -->
+<link rel="stylesheet" href="assets/css/graph.css">
+<!-- checkbox css -->
+<link rel="stylesheet" href="assets/css/checkbox.css">
+<!-- music-repository-search css -->
+<link rel="stylesheet" href="assets/css/searchnav.css">
+<!-- logout css -->
+<link rel="stylesheet" href="assets/css/logout.css">
+
 
 </head>
 
 <!-- graph all -->
 <script type="text/javascript">
+
 $(document).ready(function(){ 
 	$.ajax({
 		url: 'http://210.89.191.220:42500/api/v1/graph/all',
 		type: 'GET',
 		success: function(response) {
 			console.log("graphALLL")
-				d3js();
+				//d3js();
 			
 		},
 		error: function(error) {
@@ -32,10 +43,8 @@ $(document).ready(function(){
 		}
 	}); 
 });
-</script>
 
 <!-- DB 뮤직 리스트를 불러오기 -->
-<script type="text/javascript">
 var global_d_id = "";
 $(document).ready(function(){ 
 	$.ajax({
@@ -65,15 +74,13 @@ $(document).ready(function(){
 	}); 
 });
 
-</script>
 
 <!-- 시작 > MY 리스트를 불러오기 -->
-<script type="text/javascript">
 var globalJson = "";
 
 $(document).ready(function(){
 	myList(); 
-});  
+});
 	function myList() {
 		 $.ajax({
 				url: 'http://210.89.191.220:42500/api/v1/user/playList',
@@ -156,9 +163,9 @@ $(document).ready(function(){
 	    	 
 			}); 
 	}
-</script>
+	
+	
 <!-- 음악 저장(save_song) + 버튼 눌렀을 때  -->
-<script type="text/javascript">
 function save_song(element) {
 	console.log(element.id);
 	$.ajax({
@@ -186,10 +193,8 @@ function save_song(element) {
 }
 	
 	
-</script>
 
 <!-- 음악 삭제(remove_song) - 버튼 눌렀을 때  -->
-<script type="text/javascript">
 function remove_song(element) {
 	console.log("DELETE" + element.id);
 	$.ajax({
@@ -207,10 +212,8 @@ function remove_song(element) {
 		}
 	}); 
 }
-</script>
 
 <!-- Checkbox -->
-<script type="text/javascript">
 $(document).ready(function(){
 	$("#artist").click(function() {
 		
@@ -228,9 +231,7 @@ $(document).ready(function(){
 	});
 });
 
-</script>
 
-<script>
 function openNav() {
     document.getElementById("mySidenav").style.width = "400px";
     document.getElementById("main").style.marginLeft = "400px";
@@ -244,33 +245,32 @@ function closeNav() {
 
 <body>
 	<div id="mySidenav" class="sidenav">
- 		<a href="http://localhost:5050/hackday/login.html">
- 			<input type="button" value="Logout" class="logout"/>
-		</a> 
-		<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
- 		
- 		<!-- 음악 저장소 -->
-	    <div class="music-repository">
+		<a href="http://localhost:5050/hackday/login.html"> <input
+			type="button" value="Logout" class="logout" />
+		</a> <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+
+		<!-- 음악 저장소 -->
+		<div class="music-repository">
 			<div id="input-form">
 				Search : <input type="text" id="keyword" />
 			</div>
 			<br>
 			<table id="music-repository-table">
-            <thead>
-                <tr>
-                    <th>no</th>
-                    <th>TITLE</th>
-                    <th>ARTIST</th>
-                    <th>SAVE</th>
-                </tr>
-            </thead>
-            <tbody id="music-repository-add-list">
-                
-            </tbody>
-        </table>
-        
-        <!-- 검색 기능 -->
-        <script type="text/javascript">
+				<thead>
+					<tr>
+						<th>no</th>
+						<th>TITLE</th>
+						<th>ARTIST</th>
+						<th>SAVE</th>
+					</tr>
+				</thead>
+				<tbody id="music-repository-add-list">
+
+				</tbody>
+			</table>
+
+			<!-- 검색 기능 -->
+			<script type="text/javascript">
         	$(document).ready(function() {
         		
         		/* keyup 이벤트를 사용해서 검색 기능 구현 */
@@ -288,33 +288,34 @@ function closeNav() {
             		});
 	        	});
         </script>
-	
-     
- 		</div>
+
+
+		</div>
 	</div>
-    <div id="main">
-		<span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Music Repository</span>
+	<div id="main">
+		<span style="font-size: 30px; cursor: pointer" onclick="openNav()">&#9776;
+			Music Repository</span>
 	</div>
-	
+
 	<div class="container">
 		<!-- Search Side -->
-	    <div class="graph-area">
-	    	
-	    	<!-- CheckBox -->
-	    	<br>
+		<div class="graph-area">
+
+			<!-- CheckBox -->
+			<br>
 			<div class="checks">
-				  <input type="checkbox" id="genre" name="genre" value="장르" checked="checked">
-				  <label for="genre">장르</label>
-				  <input type="checkbox" id="artist" name="artist" value="가수">
-				  <label for="artist">가수</label>
-				  <input type="checkbox" id="writer" name="writer" value="작사">
-				  <label for="writer">작사</label>
-				  <input type="checkbox" id="composer" name="composer" value="작곡가">
-				  <label for="composer">작곡가</label>
+				<input type="checkbox" id="genre" name="genre" value="장르"
+					checked="checked"> <label for="genre">장르</label> <input
+					type="checkbox" id="artist" name="artist" value="가수"> <label
+					for="artist">가수</label> <input type="checkbox" id="writer"
+					name="writer" value="작사"> <label for="writer">작사</label> <input
+					type="checkbox" id="composer" name="composer" value="작곡가">
+				<label for="composer">작곡가</label>
 			</div>
-	
-			<!-- d3js 그래프 시각화 부분 -->	   		
-			<svg width="920" height="800"></svg> <!-- auto를 찾아야댐 -->
+
+			<!-- d3js 그래프 시각화 부분 -->
+			<svg width="920" height="800"></svg>
+			<!-- auto를 찾아야댐 -->
 			<script>
 			function d3js() {
 				var svg = d3.select("svg"),
@@ -412,50 +413,48 @@ function closeNav() {
 				}
 			}
 			</script>
-						
-	    </div>
-	    
-	    <!-- 다른 사람 리스트 -->
-	    <div class="other-list">
-	    	Other User List ( id)
-	    	
+
+		</div>
+
+		<!-- 다른 사람 리스트 -->
+		<div class="other-list">
+			Other User List ( id)
+
 			<table id="user-table">
-	            <thead>
-	                <tr>
-	                    <th>no</th>
-	                    <th>TITLE</th>
-	                    <th>ARTIST</th>
-	                    <th>SAVE</th>
-	                </tr>
-	            </thead>
-	            <tbody id="other-add-list">
-	                
-	            </tbody>
-	        </table>
-			
- 		</div>
-	    
-   		<!-- 로그인 플레이 리스트 -->
-	    <div class="login-list">
-	    	<!-- 로그인 시 유저 아이디를 뿌려줌 -->
-	    	My Music List (user id)
-	    	
-	    	<table id="user-table">
-	            <thead>
-	                <tr>
-	                    <th>no</th>
-	                    <th>TITLE</th>
-	                    <th>ARTIST</th>
-	                    <th>SAVE</th>
-	                </tr>
-	            </thead>
-	            <tbody id="login-add-list">
-	              
-	            </tbody>
-	        </table>
-	    </div>
-    </div> <!-- close container -->
+				<thead>
+					<tr>
+						<th>no</th>
+						<th>TITLE</th>
+						<th>ARTIST</th>
+						<th>SAVE</th>
+					</tr>
+				</thead>
+				<tbody id="other-add-list">
 
+				</tbody>
+			</table>
 
+		</div>
+
+		<!-- 로그인 플레이 리스트 -->
+		<div class="login-list">
+			<!-- 로그인 시 유저 아이디를 뿌려줌 -->
+			My Music List (user id)
+
+			<table id="user-table">
+				<thead>
+					<tr>
+						<th>no</th>
+						<th>TITLE</th>
+						<th>ARTIST</th>
+						<th>SAVE</th>
+					</tr>
+				</thead>
+				<tbody id="login-add-list">
+
+				</tbody>
+			</table>
+		</div>
+	</div> <!-- close container -->
 </body>
 </html>
